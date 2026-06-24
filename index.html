@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>宠物上门喂养预约支付</title>
+    <style>
+      :root {
+        --paper: rgba(255, 252, 247, 0.9);
+        --card: #fffaf4;
+        --text: #2f241d;
+        --muted: #7b685b;
+        --primary: #e5864c;
+        --primary-deep: #c96a31;
+        --accent: #5d927d;
+        --line: rgba(64, 40, 28, 0.1);
+        --danger: #b84d36;
+        --shadow: 0 24px 60px rgba(109, 71, 42, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(229, 134, 76, 0.22), transparent 34%),
+          radial-gradient(circle at top right, rgba(93, 146, 125, 0.14), transparent 28%),
+          linear-gradient(180deg, #f9f4ec 0%, #f2ebe0 100%);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 64px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 0 28px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #f7b37c, #e17f42);
+        color: #fff;
+        box-shadow: 0 14px 26px rgba(225, 127, 66, 0.28);
+      }
+
+      .nav-link {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .hero-copy,
+      .hero-card,
+      .section-card,
+      .booking-card,
+      .summary-card,
+      .success-panel {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        backdrop-filter: blur(12px);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-copy {
+        border-radius: 32px;
+        padding: 44px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(93, 146, 125, 0.12);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 18px 0 14px;
+        font-size: clamp(36px, 5vw, 62px);
+        line-height: 1.04;
+        letter-spacing: -0.04em;
+      }
+
+      .hero-copy p {
+        margin: 0;
+        max-width: 560px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.8;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 30px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 999px;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+        color: #fff;
+        box-shadow: 0 16px 26px rgba(201, 106, 49, 0.28);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.82);
+        color: var(--text);
+        border: 1px solid rgba(64, 40, 28, 0.08);
+      }
+
+      .hero-points {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 34px;
+      }
+
+      .point {
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(64, 40, 28, 0.08);
+      }
+
+      .point strong {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+
+      .point span,
+      .helper {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .hero-card {
+        border-radius: 32px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .pet-scene {
+        position: relative;
+        min-height: 300px;
+        border-radius: 28px;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(249, 231, 209, 0.92)),
+          linear-gradient(135deg, #f8b98b, #ffe7cf);
+      }
+
+      .pet-badge {
+        position: absolute;
+        padding: 10px 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--text);
+        font-size: 13px;
+        box-shadow: 0 12px 24px rgba(77, 52, 31, 0.1);
+      }
+
+      .pet-badge.one {
+        top: 18px;
+        left: 18px;
+      }
+
+      .pet-badge.two {
+        right: 18px;
+        bottom: 18px;
+      }
+
+      .pet-emoji {
+        position: absolute;
+        font-size: clamp(72px, 9vw, 108px);
+      }
+
+      .pet-emoji.cat {
+        left: 18%;
+        bottom: 18%;
+      }
+
+      .pet-emoji.bowl {
+        right: 16%;
+        top: 20%;
+      }
+
+      .mini-panel {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .mini-card {
+        padding: 18px;
+        border-radius: 22px;
+        background: var(--card);
+        border: 1px solid rgba(64, 40, 28, 0.08);
+      }
+
+      .mini-card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+
+      .mini-card span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .section,
+      .booking-layout {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+
+      .section-card,
+      .booking-card,
+      .summary-card,
+      .success-panel {
+        border-radius: 28px;
+        padding: 30px;
+      }
+
+      .section-card h2,
+      .booking-card h2,
+      .summary-card h2 {
+        margin: 0 0 18px;
+        font-size: 28px;
+        letter-spacing: -0.03em;
+      }
+
+      .service-list,
+      .steps,
+      .form-grid,
+      .pay-methods {
+        display: grid;
+        gap: 14px;
+      }
+
+      .service-item,
+      .step {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 14px;
+        align-items: start;
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid rgba(64, 40, 28, 0.08);
+      }
+
+      .icon,
+      .step-no {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+      }
+
+      .icon {
+        background: rgba(229, 134, 76, 0.14);
+      }
+
+      .step-no {
+        background: rgba(93, 146, 125, 0.14);
+        color: var(--accent);
+      }
+
+      .service-item strong,
+      .step strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 16px;
+      }
+
+      .service-item p,
+      .step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .booking-layout {
+        align-items: start;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        width: 100%;
+        border: 1px solid rgba(64, 40, 28, 0.12);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.74);
+        color: var(--text);
+        padding: 13px 14px;
+        outline: none;
+      }
+
+      .field textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: rgba(229, 134, 76, 0.72);
+        box-shadow: 0 0 0 4px rgba(229, 134, 76, 0.14);
+      }
+
+      .two-cols {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .pay-methods {
+        margin-top: 10px;
+      }
+
+      .pay-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid rgba(64, 40, 28, 0.1);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.64);
+        cursor: pointer;
+      }
+
+      .pay-option input {
+        accent-color: var(--primary);
+      }
+
+      .summary-card {
+        position: sticky;
+        top: 18px;
+      }
+
+      .summary-row,
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px dashed rgba(64, 40, 28, 0.14);
+      }
+
+      .summary-row span:first-child {
+        color: var(--muted);
+      }
+
+      .summary-total {
+        align-items: flex-end;
+        border-bottom: 0;
+        padding-top: 18px;
+      }
+
+      .summary-total span:first-child {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .summary-total strong {
+        color: var(--primary-deep);
+        font-size: 40px;
+        line-height: 1;
+      }
+
+      .notice {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .error {
+        display: none;
+        margin-top: 12px;
+        color: var(--danger);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .success-panel {
+        display: none;
+        margin-top: 28px;
+        background: rgba(236, 248, 239, 0.88);
+        border-color: rgba(93, 146, 125, 0.22);
+      }
+
+      .success-panel h2 {
+        margin: 0 0 10px;
+      }
+
+      .success-panel p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .footer-note {
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .section,
+        .booking-layout,
+        .two-cols {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-copy,
+        .hero-card,
+        .section-card,
+        .booking-card,
+        .summary-card,
+        .success-panel {
+          padding: 24px;
+        }
+
+        .hero-points,
+        .mini-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+          position: static;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(100% - 20px, 1120px);
+          padding-top: 18px;
+        }
+
+        .topbar {
+          padding-bottom: 18px;
+        }
+
+        h1 {
+          font-size: 38px;
+        }
+
+        .hero-copy p {
+          font-size: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">🐾</div>
+          <span>毛球到家</span>
+        </div>
+        <a class="nav-link" href="#booking">立即预约</a>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow">上门喂养 / 陪伴 / 清洁 / 在线支付</div>
+            <h1>出门几天，<br />也能让小家伙安心吃饭。</h1>
+            <p>
+              为猫咪、狗狗和小型宠物提供上门喂养服务。按时添粮换水、清理便盆、简单互动，
+              每次服务后同步照片和记录，让你不在家也能随时放心。
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#booking">立即预约支付</a>
+              <a class="btn btn-secondary" href="#service">查看服务详情</a>
+            </div>
+
+            <div class="hero-points">
+              <div class="point">
+                <strong>30min</strong>
+                <span>标准单次服务时长</span>
+              </div>
+              <div class="point">
+                <strong>1v1</strong>
+                <span>固定喂养师上门</span>
+              </div>
+              <div class="point">
+                <strong>实时发图</strong>
+                <span>每次服务有记录</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <div class="pet-scene">
+              <div class="pet-badge one">今日已服务 18 家</div>
+              <div class="pet-badge two">支持钥匙交接 / 密码锁</div>
+              <div class="pet-emoji cat">🐱</div>
+              <div class="pet-emoji bowl">🥣</div>
+            </div>
+            <div class="mini-panel">
+              <div class="mini-card">
+                <strong>基础服务</strong>
+                <span>喂食换水、清洁猫砂、收拾食盆，按你的习惯执行。</span>
+              </div>
+              <div class="mini-card">
+                <strong>到家反馈</strong>
+                <span>结束后发送照片、视频和文字备注，状态一目了然。</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="service" class="section">
+          <div class="section-card">
+            <h2>服务内容</h2>
+            <div class="service-list">
+              <div class="service-item">
+                <div class="icon">🍽️</div>
+                <div>
+                  <strong>按需求喂食</strong>
+                  <p>根据宠物习惯分量喂粮、开罐头、准备零食，避免突然换食造成应激。</p>
+                </div>
+              </div>
+              <div class="service-item">
+                <div class="icon">🧼</div>
+                <div>
+                  <strong>基础清洁</strong>
+                  <p>处理猫砂、清洗水碗食碗、简单整理活动区域，保持居家环境整洁。</p>
+                </div>
+              </div>
+              <div class="service-item">
+                <div class="icon">🎾</div>
+                <div>
+                  <strong>短时陪伴</strong>
+                  <p>逗猫、陪玩、安抚情绪，帮助独自在家的宠物维持熟悉节奏。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <h2>预约流程</h2>
+            <div class="steps">
+              <div class="step">
+                <div class="step-no">01</div>
+                <div>
+                  <strong>提交信息</strong>
+                  <p>填写地址、宠物数量、喂养要求和服务日期。</p>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-no">02</div>
+                <div>
+                  <strong>在线支付</strong>
+                  <p>确认套餐、次数和附加服务后生成订单金额。</p>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-no">03</div>
+                <div>
+                  <strong>服务反馈</strong>
+                  <p>服务完成后推送现场照片和备注，异常情况及时联系。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="booking" class="booking-layout">
+          <form class="booking-card" id="bookingForm">
+            <h2>预约信息</h2>
+            <div class="form-grid">
+              <div class="two-cols">
+                <div class="field">
+                  <label for="name">联系人</label>
+                  <input id="name" name="name" placeholder="请输入姓名" required />
+                </div>
+                <div class="field">
+                  <label for="phone">手机号</label>
+                  <input id="phone" name="phone" inputmode="tel" placeholder="用于确认订单" required />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="address">上门地址</label>
+                <input id="address" name="address" placeholder="小区 / 楼栋 / 门牌号" required />
+              </div>
+
+              <div class="two-cols">
+                <div class="field">
+                  <label for="petType">宠物类型</label>
+                  <select id="petType" name="petType">
+                    <option value="猫咪">猫咪</option>
+                    <option value="狗狗">狗狗</option>
+                    <option value="小型宠物">小型宠物</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="petCount">宠物数量</label>
+                  <select id="petCount" name="petCount">
+                    <option value="1">1 只</option>
+                    <option value="2">2 只</option>
+                    <option value="3">3 只</option>
+                    <option value="4">4 只</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="two-cols">
+                <div class="field">
+                  <label for="date">服务日期</label>
+                  <input id="date" name="date" type="date" required />
+                </div>
+                <div class="field">
+                  <label for="time">上门时段</label>
+                  <select id="time" name="time">
+                    <option value="09:00-12:00">09:00-12:00</option>
+                    <option value="12:00-15:00">12:00-15:00</option>
+                    <option value="15:00-18:00">15:00-18:00</option>
+                    <option value="18:00-21:00">18:00-21:00</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="two-cols">
+                <div class="field">
+                  <label for="package">服务套餐</label>
+                  <select id="package" name="package">
+                    <option value="68">标准喂养 · ¥68/次</option>
+                    <option value="98">精细照护 · ¥98/次</option>
+                    <option value="128">长时陪伴 · ¥128/次</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="visits">服务次数</label>
+                  <select id="visits" name="visits">
+                    <option value="1">1 次</option>
+                    <option value="2">2 次</option>
+                    <option value="3">3 次</option>
+                    <option value="5">5 次</option>
+                    <option value="7">7 次</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="extra">附加服务</label>
+                <select id="extra" name="extra">
+                  <option value="0">无需附加服务</option>
+                  <option value="20">喂药 / 特殊护理 +¥20</option>
+                  <option value="30">植物浇水 / 取快递 +¥30</option>
+                  <option value="50">双倍陪伴时长 +¥50</option>
+                </select>
+                <span class="helper">附加服务按每次上门计费，超过 2 只宠物每只每次加收 ¥18。</span>
+              </div>
+
+              <div class="field">
+                <label for="note">喂养备注</label>
+                <textarea id="note" name="note" placeholder="例如：猫粮克数、罐头位置、猫砂铲放在哪里、入户方式等"></textarea>
+              </div>
+
+              <div class="field">
+                <label>支付方式</label>
+                <div class="pay-methods">
+                  <label class="pay-option">
+                    <span>微信支付</span>
+                    <input type="radio" name="payment" value="微信支付" checked />
+                  </label>
+                  <label class="pay-option">
+                    <span>支付宝</span>
+                    <input type="radio" name="payment" value="支付宝" />
+                  </label>
+                  <label class="pay-option">
+                    <span>银行卡</span>
+                    <input type="radio" name="payment" value="银行卡" />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <aside class="summary-card" aria-live="polite">
+            <h2>订单确认</h2>
+            <div class="summary-row">
+              <span>服务套餐</span>
+              <strong id="summaryPackage">标准喂养</strong>
+            </div>
+            <div class="summary-row">
+              <span>上门次数</span>
+              <strong id="summaryVisits">1 次</strong>
+            </div>
+            <div class="summary-row">
+              <span>宠物数量</span>
+              <strong id="summaryPets">1 只</strong>
+            </div>
+            <div class="summary-row">
+              <span>附加费用</span>
+              <strong id="summaryExtra">¥0</strong>
+            </div>
+            <div class="summary-row">
+              <span>支付方式</span>
+              <strong id="summaryPayment">微信支付</strong>
+            </div>
+            <div class="summary-total">
+              <span>应付金额</span>
+              <strong id="summaryTotal">¥68</strong>
+            </div>
+            <button class="btn btn-primary" type="submit" form="bookingForm">确认并支付</button>
+            <div class="error" id="formError">请先填写联系人、手机号、地址和服务日期。</div>
+            <p class="notice">
+              当前页面为预约支付功能演示，点击确认后会生成模拟订单，不会发起真实扣款。
+            </p>
+          </aside>
+        </section>
+
+        <section class="success-panel" id="successPanel">
+          <h2>预约支付已提交</h2>
+          <p id="successText"></p>
+        </section>
+
+        <div class="footer-note">毛球到家 · 宠物上门喂养预约支付页</div>
+      </main>
+    </div>
+
+    <script>
+      const form = document.getElementById("bookingForm");
+      const packageSelect = document.getElementById("package");
+      const visitsSelect = document.getElementById("visits");
+      const petCountSelect = document.getElementById("petCount");
+      const extraSelect = document.getElementById("extra");
+      const error = document.getElementById("formError");
+      const successPanel = document.getElementById("successPanel");
+      const successText = document.getElementById("successText");
+
+      const packageNames = {
+        68: "标准喂养",
+        98: "精细照护",
+        128: "长时陪伴",
+      };
+
+      function getPaymentMethod() {
+        return form.querySelector('input[name="payment"]:checked').value;
+      }
+
+      function calculateTotal() {
+        const basePrice = Number(packageSelect.value);
+        const visits = Number(visitsSelect.value);
+        const petCount = Number(petCountSelect.value);
+        const extraPrice = Number(extraSelect.value);
+        const extraPetFee = Math.max(petCount - 2, 0) * 18 * visits;
+        return basePrice * visits + extraPrice * visits + extraPetFee;
+      }
+
+      function updateSummary() {
+        const visits = Number(visitsSelect.value);
+        const petCount = Number(petCountSelect.value);
+        const extraPrice = Number(extraSelect.value);
+        const extraPetFee = Math.max(petCount - 2, 0) * 18 * visits;
+
+        document.getElementById("summaryPackage").textContent = packageNames[packageSelect.value];
+        document.getElementById("summaryVisits").textContent = `${visits} 次`;
+        document.getElementById("summaryPets").textContent = `${petCount} 只${extraPetFee ? "（含多宠费）" : ""}`;
+        document.getElementById("summaryExtra").textContent = `¥${extraPrice * visits + extraPetFee}`;
+        document.getElementById("summaryPayment").textContent = getPaymentMethod();
+        document.getElementById("summaryTotal").textContent = `¥${calculateTotal()}`;
+      }
+
+      form.addEventListener("input", updateSummary);
+      form.addEventListener("change", updateSummary);
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!form.checkValidity()) {
+          error.style.display = "block";
+          form.reportValidity();
+          return;
+        }
+
+        error.style.display = "none";
+        const data = new FormData(form);
+        const orderNo = `MB${Date.now().toString().slice(-8)}`;
+        successText.textContent = `订单 ${orderNo} 已创建：${data.get("name")} 预约 ${data.get("date")} ${data.get("time")} 上门照护 ${data.get("petCount")} 只${data.get("petType")}，已选择${getPaymentMethod()}模拟支付 ¥${calculateTotal()}。喂养师确认后将通过 ${data.get("phone")} 联系你。`;
+        successPanel.style.display = "block";
+        successPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      document.getElementById("date").min = new Date().toISOString().split("T")[0];
+      updateSummary();
+    </script>
+  </body>
+</html>

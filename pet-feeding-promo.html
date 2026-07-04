@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>宠物上门喂养 - 专业宠物照护服务</title>
+  <style>
+    :root {
+      --primary: #ff8c42;
+      --primary-dark: #e07030;
+      --accent: #4caf93;
+      --bg: #faf6f1;
+      --card: #fff;
+      --text: #333;
+      --muted: #888;
+      --border: #eee;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .container { max-width: 480px; margin: 0 auto; padding: 0 16px 40px; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 48px 20px 36px;
+      background: linear-gradient(135deg, #fff3e6, #ffecd2);
+      border-radius: 0 0 32px 32px;
+      margin-bottom: 24px;
+    }
+    .hero .icon { font-size: 64px; margin-bottom: 12px; }
+    .hero h1 { font-size: 26px; margin-bottom: 8px; color: var(--primary-dark); }
+    .hero p { font-size: 15px; color: var(--muted); max-width: 320px; margin: 0 auto; }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-item {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px 8px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .stat-item .num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .stat-item .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Services */
+    .service-list { display: grid; gap: 14px; }
+    .service-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #faf8f5;
+      transition: transform 0.2s;
+    }
+    .service-item:hover { transform: translateY(-2px); }
+    .service-item .emoji { font-size: 32px; flex-shrink: 0; }
+    .service-item .info h3 { font-size: 15px; margin-bottom: 4px; }
+    .service-item .info p { font-size: 13px; color: var(--muted); }
+    .service-item .price {
+      margin-left: auto;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      white-space: nowrap;
+    }
+
+    /* Features */
+    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .feature-item {
+      padding: 16px;
+      background: #f8faf9;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .feature-item .emoji { font-size: 28px; margin-bottom: 8px; }
+    .feature-item .title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .feature-item .desc { font-size: 12px; color: var(--muted); }
+
+    /* Process */
+    .process-steps { display: grid; gap: 14px; }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .step-text { font-size: 14px; }
+    .step-text strong { display: block; margin-bottom: 2px; }
+    .step-text span { color: var(--muted); font-size: 13px; }
+
+    /* Reviews */
+    .reviews { display: grid; gap: 12px; }
+    .review {
+      padding: 14px;
+      background: #faf8f5;
+      border-radius: 10px;
+    }
+    .review .stars { color: #f5a623; margin-bottom: 6px; }
+    .review .content { font-size: 13px; color: #555; margin-bottom: 6px; }
+    .review .author { font-size: 12px; color: var(--muted); }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      padding: 24px 0;
+    }
+    .btn-cta {
+      display: inline-block;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+    .cta-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="icon">🐾</div>
+    <h1>宠物上门喂养服务</h1>
+    <p>出差旅行不担心，专业喂养师上门照顾您的毛孩子，安心又放心</p>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-item">
+        <div class="num">5000+</div>
+        <div class="label">服务家庭</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">4.9</div>
+        <div class="label">用户评分</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">100%</div>
+        <div class="label">持证上岗</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 服务套餐</div>
+      <div class="service-list">
+        <div class="service-item">
+          <span class="emoji">🍚</span>
+          <div class="info">
+            <h3>基础喂养</h3>
+            <p>喂食换水、清理猫砂/便盆、拍照反馈</p>
+          </div>
+          <span class="price">¥68/次</span>
+        </div>
+        <div class="service-item">
+          <span class="emoji">💕</span>
+          <div class="info">
+            <h3>精细照护</h3>
+            <p>含基础服务 + 梳毛陪玩、健康观察、视频直播</p>
+          </div>
+          <span class="price">¥98/次</span>
+        </div>
+        <div class="service-item">
+          <span class="emoji">🏠</span>
+          <div class="info">
+            <h3>长时陪伴</h3>
+            <p>含精细服务 + 2小时陪伴、遛狗散步、环境清洁</p>
+          </div>
+          <span class="price">¥128/次</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✨ 为什么选择我们</div>
+      <div class="features">
+        <div class="feature-item">
+          <div class="emoji">📋</div>
+          <div class="title">持证上岗</div>
+          <div class="desc">全部通过专业培训并持宠物护理证书</div>
+        </div>
+        <div class="feature-item">
+          <div class="emoji">📷</div>
+          <div class="title">实时反馈</div>
+          <div class="desc">服务全程拍照/视频实时汇报</div>
+        </div>
+        <div class="feature-item">
+          <div class="emoji">🔒</div>
+          <div class="title">安全保障</div>
+          <div class="desc">人员实名认证，服务全程投保</div>
+        </div>
+        <div class="feature-item">
+          <div class="emoji">💰</div>
+          <div class="title">透明定价</div>
+          <div class="desc">无隐藏费用，不满意全额退款</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 服务流程</div>
+      <div class="process-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>在线预约</strong>
+            <span>选择服务套餐，填写宠物信息</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>匹配喂养师</strong>
+            <span>系统智能匹配，提前沟通需求</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>上门服务</strong>
+            <span>准时到达，按需求细心照料</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <strong>服务反馈</strong>
+            <span>照片视频实时发送，安心出行</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💬 用户好评</div>
+      <div class="reviews">
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <div class="content">出差一周，喂养师每天按时上门，照片视频及时反馈，猫咪状态很好，比送宠物店放心多了！</div>
+          <div class="author">— 王女士，2只猫咪</div>
+        </div>
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <div class="content">第一次用就爱上了，喂养师很专业也很有耐心，我家狗狗特别粘她，下次出门还会预约。</div>
+          <div class="author">— 李先生，金毛犬</div>
+        </div>
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <div class="content">春节回老家7天，套餐很划算，喂养师还帮忙浇花收快递，超贴心的服务！</div>
+          <div class="author">— 张小姐，布偶猫</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <a href="pet-booking.html" class="btn-cta">立即预约上门喂养</a>
+      <p class="cta-note">新用户首单立减10元 | 周套餐享85折</p>
+    </div>
+
+    <div class="footer">
+      <p>客服热线：400-888-PETS（7287）</p>
+      <p>服务时间：每日 08:00 - 22:00</p>
+      <p style="margin-top:8px;">© 2026 宠物上门喂养 All Rights Reserved</p>
+    </div>
+  </div>
+</body>
+</html>

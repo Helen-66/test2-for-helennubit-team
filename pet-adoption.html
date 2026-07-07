@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>宠物领养 - 给毛孩子一个温暖的家</title>
+  <style>
+    :root {
+      --primary: #ff8c42;
+      --primary-dark: #e07030;
+      --accent: #4caf93;
+      --bg: #faf6f1;
+      --card: #fff;
+      --text: #333;
+      --muted: #888;
+      --border: #eee;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+    .header {
+      text-align: center;
+      padding: 24px 0;
+    }
+    .header h1 { font-size: 22px; margin-bottom: 6px; }
+    .header p { color: var(--muted); font-size: 14px; }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* 宠物列表 */
+    .pet-list { display: grid; gap: 14px; }
+    .pet-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pet-item:hover { border-color: var(--primary); }
+    .pet-item.active {
+      border-color: var(--primary);
+      background: rgba(255,140,66,0.04);
+    }
+    .pet-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      background: #f5f0eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+    .pet-info { flex: 1; }
+    .pet-info .name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .pet-info .desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .pet-tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .pet-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(76,175,147,0.1);
+      color: var(--accent);
+    }
+
+    /* 表单 */
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+    }
+    .form-group textarea { min-height: 70px; resize: vertical; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* 领养须知 */
+    .notice-list { list-style: none; padding: 0; }
+    .notice-list li {
+      position: relative;
+      padding: 8px 0 8px 20px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+    .notice-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .checkbox-group input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: opacity 0.2s;
+    }
+    .btn-submit:hover { opacity: 0.9; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .success-msg .icon { font-size: 48px; margin-bottom: 12px; }
+    .success-msg h2 { font-size: 20px; margin-bottom: 8px; color: var(--accent); }
+    .success-msg p { color: var(--muted); font-size: 14px; line-height: 1.8; white-space: pre-line; }
+
+    .error-msg {
+      display: none;
+      color: #d32f2f;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--card);
+      transition: all 0.2s;
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏠 宠物领养</h1>
+      <p>用爱代替购买，给流浪毛孩子一个温暖的家</p>
+    </div>
+
+    <form id="adoptionForm">
+      <!-- 宠物选择 -->
+      <div class="card">
+        <div class="card-title">选择要领养的宠物</div>
+        <div class="filter-bar" id="filterBar">
+          <span class="filter-btn active" data-filter="all">全部</span>
+          <span class="filter-btn" data-filter="cat">猫咪</span>
+          <span class="filter-btn" data-filter="dog">狗狗</span>
+          <span class="filter-btn" data-filter="other">其他</span>
+        </div>
+        <div class="pet-list" id="petList"></div>
+      </div>
+
+      <!-- 领养人信息 -->
+      <div class="card">
+        <div class="card-title">领养人信息</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>姓名</label>
+            <input type="text" id="adopterName" placeholder="真实姓名" required />
+          </div>
+          <div class="form-group">
+            <label>手机号</label>
+            <input type="tel" id="adopterPhone" placeholder="联系电话" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>居住地址</label>
+          <input type="text" id="adopterAddress" placeholder="详细住址" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>住房类型</label>
+            <select id="housingType">
+              <option value="自有住房">自有住房</option>
+              <option value="租房（允许养宠）">租房（允许养宠）</option>
+              <option value="与家人同住">与家人同住</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>养宠经验</label>
+            <select id="experience">
+              <option value="无经验">无经验</option>
+              <option value="1-2年">1-2年</option>
+              <option value="3-5年">3-5年</option>
+              <option value="5年以上">5年以上</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>领养理由</label>
+          <textarea id="reason" placeholder="为什么想领养这只宠物？您的家庭情况如何？"></textarea>
+        </div>
+      </div>
+
+      <!-- 领养须知 -->
+      <div class="card">
+        <div class="card-title">领养须知</div>
+        <ul class="notice-list">
+          <li>领养宠物需年满18周岁，有稳定住所和收入</li>
+          <li>领养后须按时接种疫苗、定期体检</li>
+          <li>承诺科学喂养，不离不弃</li>
+          <li>同意接受定期回访（前3个月每月一次）</li>
+          <li>如无法继续饲养，须联系我们协助转领养</li>
+        </ul>
+        <div class="checkbox-group">
+          <input type="checkbox" id="agreeTerms" />
+          <label for="agreeTerms">我已阅读并同意以上领养须知</label>
+        </div>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+      <button type="submit" class="btn-submit" id="submitBtn" disabled>提交领养申请</button>
+      <p style="text-align:center;color:#aaa;font-size:12px;margin-top:10px;">本页为功能演示，提交后将进入审核流程</p>
+    </form>
+
+    <div class="card success-msg" id="successMsg">
+      <div class="icon">🎉</div>
+      <h2>申请提交成功</h2>
+      <p id="successDetail"></p>
+    </div>
+  </div>
+
+  <script>
+    const pets = [
+      { id: 1, name: '橘座', type: 'cat', avatar: '🐱', age: '2岁', gender: '公',
+        desc: '性格温顺亲人，爱撒娇，已绝育已驱虫', tags: ['已绝育', '亲人', '会用猫砂'] },
+      { id: 2, name: '小黑', type: 'dog', avatar: '🐶', age: '1岁', gender: '公',
+        desc: '中华田园犬，活泼好动，忠诚护主', tags: ['已疫苗', '活泼', '中型犬'] },
+      { id: 3, name: '花花', type: 'cat', avatar: '🐱', age: '3岁', gender: '母',
+        desc: '三花猫，安静优雅，适合家庭饲养', tags: ['已绝育', '安静', '已疫苗'] },
+      { id: 4, name: '旺财', type: 'dog', avatar: '🐶', age: '6个月', gender: '公',
+        desc: '拉布拉多mix，聪明好训练，精力充沛', tags: ['幼犬', '聪明', '大型犬'] },
+      { id: 5, name: '团子', type: 'other', avatar: '🐰', age: '1岁', gender: '母',
+        desc: '垂耳兔，性格温和，不挑食好养活', tags: ['小型', '安静', '好养'] },
+      { id: 6, name: '咪咪', type: 'cat', avatar: '🐱', age: '4个月', gender: '母',
+        desc: '狸花猫幼崽，好奇心强，正在学用猫砂', tags: ['幼猫', '好奇', '需耐心'] },
+    ];
+
+    let selectedPetId = null;
+    let currentFilter = 'all';
+
+    function renderPets() {
+      const list = document.getElementById('petList');
+      const filtered = currentFilter === 'all' ? pets : pets.filter(p => p.type === currentFilter);
+      list.innerHTML = filtered.map(pet => `
+        <div class="pet-item ${selectedPetId === pet.id ? 'active' : ''}" data-id="${pet.id}">
+          <div class="pet-avatar">${pet.avatar}</div>
+          <div class="pet-info">
+            <div class="name">${pet.name}（${pet.gender}·${pet.age}）</div>
+            <div class="desc">${pet.desc}</div>
+            <div class="pet-tags">${pet.tags.map(t => `<span class="pet-tag">${t}</span>`).join('')}</div>
+          </div>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.pet-item').forEach(item => {
+        item.addEventListener('click', () => {
+          selectedPetId = Number(item.dataset.id);
+          renderPets();
+        });
+      });
+    }
+
+    // 筛选
+    document.getElementById('filterBar').addEventListener('click', (e) => {
+      if (!e.target.classList.contains('filter-btn')) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentFilter = e.target.dataset.filter;
+      renderPets();
+    });
+
+    // 同意条款启用按钮
+    document.getElementById('agreeTerms').addEventListener('change', (e) => {
+      document.getElementById('submitBtn').disabled = !e.target.checked;
+    });
+
+    // 表单提交
+    document.getElementById('adoptionForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (!selectedPetId) {
+        errorMsg.textContent = '请选择要领养的宠物';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      const name = document.getElementById('adopterName').value.trim();
+      const phone = document.getElementById('adopterPhone').value.trim();
+      const address = document.getElementById('adopterAddress').value.trim();
+
+      if (!name || !phone || !address) {
+        errorMsg.textContent = '请填写完整的领养人信息';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      if (!/^1\d{10}$/.test(phone)) {
+        errorMsg.textContent = '请输入正确的11位手机号';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+
+      const pet = pets.find(p => p.id === selectedPetId);
+      const appNo = 'ADOPT' + Date.now().toString().slice(-8);
+
+      document.getElementById('successDetail').textContent =
+        `申请编号：${appNo}\n` +
+        `领养宠物：${pet.name}（${pet.gender}·${pet.age}）\n` +
+        `领养人：${name}\n` +
+        `联系电话：${phone}\n\n` +
+        `我们将在3个工作日内审核您的申请，\n审核通过后会电话通知您前来接宠物。`;
+
+      document.getElementById('adoptionForm').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    renderPets();
+  </script>
+</body>
+</html>

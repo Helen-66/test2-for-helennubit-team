@@ -1,0 +1,38 @@
+<view class="container" wx:if="{{sitter}}">
+  <view class="profile">
+    <image class="avatar" src="{{sitter.user.avatarUrl || '/assets/default-avatar.png'}}" />
+    <view class="info">
+      <text class="name">{{sitter.realName}}</text>
+      <text class="rating">评分 {{sitter.rating}} · 已服务{{sitter.orderCount}}次</text>
+      <text class="address">{{sitter.address}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">服务项目</text>
+    <view class="service-list">
+      <view class="service-item" wx:for="{{sitter.serviceItems}}" wx:key="name">
+        <text class="service-name">{{item.name}}</text>
+        <text class="service-price">¥{{item.price}}/{{item.unit}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{reviews.length > 0}}">
+    <text class="section-title">用户评价</text>
+    <view class="review-list">
+      <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+        <view class="review-header">
+          <image class="review-avatar" src="{{item.user.avatarUrl || '/assets/default-avatar.png'}}" />
+          <text class="review-name">{{item.user.nickname}}</text>
+          <text class="review-rating">{{item.rating}}分</text>
+        </view>
+        <text class="review-content">{{item.content}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer">
+    <button class="btn-order" bindtap="goToOrder">预约服务</button>
+  </view>
+</view>

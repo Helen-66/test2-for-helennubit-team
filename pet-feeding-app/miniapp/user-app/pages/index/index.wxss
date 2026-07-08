@@ -1,0 +1,18 @@
+.container { padding: 24rpx; background: #f5f5f5; min-height: 100vh; }
+.header { padding: 20rpx 0 30rpx; }
+.header .title { font-size: 36rpx; font-weight: bold; color: #333; }
+.header .sub { display: block; font-size: 24rpx; color: #999; margin-top: 8rpx; }
+.loading, .empty { text-align: center; padding: 100rpx 0; color: #999; }
+.sitter-list { display: flex; flex-direction: column; gap: 20rpx; }
+.sitter-card { display: flex; background: #fff; border-radius: 16rpx; padding: 24rpx; box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05); }
+.avatar { width: 120rpx; height: 120rpx; border-radius: 50%; margin-right: 20rpx; flex-shrink: 0; }
+.info { flex: 1; overflow: hidden; }
+.name-row { display: flex; justify-content: space-between; align-items: center; }
+.name { font-size: 30rpx; font-weight: bold; color: #333; }
+.rating { font-size: 24rpx; color: #FF8C42; }
+.address { font-size: 22rpx; color: #999; margin-top: 8rpx; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tags { display: flex; flex-wrap: wrap; gap: 8rpx; margin-top: 12rpx; }
+.tag { font-size: 20rpx; background: #FFF3E8; color: #FF8C42; padding: 4rpx 12rpx; border-radius: 4rpx; }
+.bottom-row { display: flex; justify-content: space-between; margin-top: 12rpx; }
+.distance { font-size: 22rpx; color: #666; }
+.order-count { font-size: 22rpx; color: #999; }

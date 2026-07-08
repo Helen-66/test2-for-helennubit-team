@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  openid    String   @unique @db.VarChar(64)
+  unionid   String?  @db.VarChar(64)
+  phone     String?  @db.VarChar(20)
+  nickname  String?  @db.VarChar(64)
+  avatarUrl String?  @db.VarChar(512)
+  role      Int      @default(1) // 1-普通用户 2-宠托师 3-双重身份
+  status    Int      @default(1) // 1-正常 0-封禁
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pets    Pet[]
+  orders  Order[]   @relation("UserOrders")
+  sitter  PetSitter?
+  reviews Review[]
+
+  @@map("user")
+}
+
+model PetSitter {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique
+  realName      String   @db.VarChar(32)
+  idCardNo      String   @db.VarChar(128) // AES加密存储
+  idCardFront   String   @db.VarChar(512)
+  idCardBack    String   @db.VarChar(512)
+  idCardHold    String   @db.VarChar(512)
+  certImages    Json?
+  longitude     Decimal  @db.Decimal(10, 7)
+  latitude      Decimal  @db.Decimal(10, 7)
+  address       String   @db.VarChar(256)
+  serviceRadius Int      @default(3000)
+  serviceItems  Json     // [{name, price, unit}]
+  availableTime Json?    // [{dayOfWeek, startTime, endTime}]
+  isOnline      Boolean  @default(false)
+  auditStatus   Int      @default(0) // 0-待审核 1-通过 2-驳回
+  auditRemark   String?  @db.VarChar(256)
+  rating        Decimal  @default(5.0) @db.Decimal(2, 1)
+  orderCount    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id])
+  orders Order[] @relation("SitterOrders")
+  reviews Review[]
+
+  @@map("pet_sitter")
+}
+
+model Pet {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  name         String   @db.VarChar(32)
+  species      String   @db.VarChar(16) // 猫/狗/其他
+  breed        String?  @db.VarChar(32)
+  weight       Decimal? @db.Decimal(4, 1)
+  age          String?  @db.VarChar(16)
+  gender       Int?     // 1-公 2-母
+  characterDesc String? @db.VarChar(256)
+  feedingNotes String?  @db.Text
+  photos       Json?
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("pet")
+}
+
+model Order {
+  id               Int       @id @default(autoincrement())
+  orderNo          String    @unique @db.VarChar(32)
+  userId           Int
+  sitterId         Int
+  petIds           Json
+  status           Int       @default(0) // 0-待支付 1-待接单 2-已接单 3-服务中 4-已完成 5-已取消 6-已拒单
+  serviceDateStart DateTime  @db.Date
+  serviceDateEnd   DateTime  @db.Date
+  dailyTimes       Int       @default(1)
+  serviceItems     Json
+  serviceAddress   String    @db.VarChar(256)
+  addressLng       Decimal   @db.Decimal(10, 7)
+  addressLat       Decimal   @db.Decimal(10, 7)
+  totalAmount      Decimal   @db.Decimal(10, 2)
+  platformFee      Decimal   @default(0) @db.Decimal(10, 2)
+  sitterIncome     Decimal   @db.Decimal(10, 2)
+  remark           String?   @db.VarChar(512)
+  rejectReason     String?   @db.VarChar(256)
+  cancelReason     String?   @db.VarChar(256)
+  signInTime       DateTime?
+  signInLng        Decimal?  @db.Decimal(10, 7)
+  signInLat        Decimal?  @db.Decimal(10, 7)
+  completeTime     DateTime?
+  settleTime       DateTime?
+  settleStatus     Int       @default(0) // 0-未结算 1-结算中 2-已结算 3-结算失败
+  paidAt           DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user     User      @relation("UserOrders", fields: [userId], references: [id])
+  sitter   PetSitter @relation("SitterOrders", fields: [sitterId], references: [id])
+  payments Payment[]
+  review   Review?
+
+  @@map("order")
+}
+
+model Payment {
+  id            Int       @id @default(autoincrement())
+  orderId       Int
+  transactionId String?   @db.VarChar(64)
+  amount        Decimal   @db.Decimal(10, 2)
+  type          Int       // 1-用户支付 2-退款 3-打款给宠托师
+  status        Int       @default(0) // 0-处理中 1-成功 2-失败
+  payTime       DateTime?
+  createdAt     DateTime  @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@map("payment")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  orderId   Int      @unique
+  userId    Int
+  sitterId  Int
+  rating    Int      // 1-5
+  content   String?  @db.VarChar(512)
+  images    Json?
+  createdAt DateTime @default(now())
+
+  order  Order     @relation(fields: [orderId], references: [id])
+  user   User      @relation(fields: [userId], references: [id])
+  sitter PetSitter @relation(fields: [sitterId], references: [id])
+
+  @@map("review")
+}

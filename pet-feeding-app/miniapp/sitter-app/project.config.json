@@ -1,0 +1,13 @@
+{
+  "appid": "your-sitter-appid",
+  "projectname": "pet-feeding-sitter",
+  "description": "宠物上门喂养-宠托师端",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true
+  },
+  "compileType": "miniprogram"
+}

@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="section">
+    <text class="section-title">基本信息</text>
+    <view class="form-item"><text class="label">真实姓名</text><input value="{{form.realName}}" bindinput="onInput" data-field="realName" placeholder="请输入真实姓名" /></view>
+    <view class="form-item"><text class="label">身份证号</text><input value="{{form.idCardNo}}" bindinput="onInput" data-field="idCardNo" placeholder="请输入身份证号" /></view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">身份证照片</text>
+    <view class="upload-row">
+      <view class="upload-item" bindtap="uploadImage" data-field="idCardFront">
+        <image wx:if="{{form.idCardFront}}" src="{{form.idCardFront}}" class="preview" mode="aspectFill" />
+        <text wx:else class="upload-text">+正面</text>
+      </view>
+      <view class="upload-item" bindtap="uploadImage" data-field="idCardBack">
+        <image wx:if="{{form.idCardBack}}" src="{{form.idCardBack}}" class="preview" mode="aspectFill" />
+        <text wx:else class="upload-text">+背面</text>
+      </view>
+      <view class="upload-item" bindtap="uploadImage" data-field="idCardHold">
+        <image wx:if="{{form.idCardHold}}" src="{{form.idCardHold}}" class="preview" mode="aspectFill" />
+        <text wx:else class="upload-text">+手持</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">服务地址</text>
+    <view class="address-row" bindtap="chooseLocation">
+      <text class="{{form.address ? '' : 'placeholder'}}">{{form.address || '点击选择服务地址(将以此为中心3公里接单)'}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">服务项目</text>
+    <view class="service-list">
+      <view class="service-item" wx:for="{{form.serviceItems}}" wx:key="name">
+        <text>{{item.name}} ¥{{item.price}}/{{item.unit}}</text>
+        <text class="btn-remove" bindtap="removeService" data-idx="{{index}}">x</text>
+      </view>
+    </view>
+    <view class="add-service">
+      <input placeholder="服务名" value="{{newServiceName}}" bindinput="onNewServiceInput" data-field="newServiceName" class="input-sm" />
+      <input placeholder="价格" type="digit" value="{{newServicePrice}}" bindinput="onNewServiceInput" data-field="newServicePrice" class="input-sm" />
+      <button size="mini" class="btn-add" bindtap="addService">添加</button>
+    </view>
+  </view>
+
+  <button class="btn-submit" bindtap="submit">提交认证</button>
+</view>

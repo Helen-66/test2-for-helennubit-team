@@ -1,0 +1,13 @@
+{
+  "appid": "your-appid",
+  "projectname": "pet-feeding-user",
+  "description": "宠物上门喂养-用户端",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true
+  },
+  "compileType": "miniprogram"
+}

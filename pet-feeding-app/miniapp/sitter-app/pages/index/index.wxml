@@ -1,0 +1,49 @@
+<view class="container">
+  <!-- 顶部状态 -->
+  <view class="status-bar">
+    <view class="status-info">
+      <text class="status-text">当前状态: {{isOnline ? '在线接单中' : '已离线'}}</text>
+    </view>
+    <switch checked="{{isOnline}}" bindchange="toggleOnline" color="#4A90D9" />
+  </view>
+
+  <!-- 待接单 -->
+  <view class="section">
+    <text class="section-title">待接订单 ({{pendingOrders.length}})</text>
+    <view wx:if="{{pendingOrders.length === 0}}" class="empty">暂无待接订单</view>
+    <view class="order-list">
+      <view class="order-card" wx:for="{{pendingOrders}}" wx:key="id">
+        <view class="order-info" bindtap="goToDetail" data-id="{{item.id}}">
+          <text class="user-name">用户: {{item.user.nickname}}</text>
+          <text class="service-date">{{item.serviceDateStart}} ~ {{item.serviceDateEnd}}</text>
+          <text class="service-addr">地址: {{item.serviceAddress}}</text>
+          <text class="amount">收入: ¥{{item.sitterIncome}}</text>
+        </view>
+        <view class="order-btns">
+          <button class="btn-accept" size="mini" bindtap="acceptOrder" data-id="{{item.id}}">接单</button>
+          <button class="btn-reject" size="mini" bindtap="rejectOrder" data-id="{{item.id}}">拒单</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 进行中的订单 -->
+  <view class="section">
+    <text class="section-title">进行中 ({{activeOrders.length}})</text>
+    <view wx:if="{{activeOrders.length === 0}}" class="empty">暂无进行中订单</view>
+    <view class="order-list">
+      <view class="order-card" wx:for="{{activeOrders}}" wx:key="id">
+        <view class="order-info" bindtap="goToDetail" data-id="{{item.id}}">
+          <text class="user-name">用户: {{item.user.nickname}}</text>
+          <text class="service-date">{{item.serviceDateStart}} ~ {{item.serviceDateEnd}}</text>
+          <text class="service-addr">{{item.serviceAddress}}</text>
+          <text class="status-tag">{{statusMap[item.status]}}</text>
+        </view>
+        <view class="order-btns">
+          <button wx:if="{{item.status === 2}}" class="btn-signin" size="mini" bindtap="signIn" data-id="{{item.id}}">签到</button>
+          <button wx:if="{{item.status === 3}}" class="btn-complete" size="mini" bindtap="completeOrder" data-id="{{item.id}}">完成</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

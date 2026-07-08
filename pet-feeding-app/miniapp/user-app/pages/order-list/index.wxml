@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="tabs">
+    <view class="tab {{currentTab === item.value ? 'active' : ''}}" wx:for="{{tabs}}" wx:key="value" bindtap="onTabChange" data-value="{{item.value}}">
+      {{item.label}}
+    </view>
+  </view>
+
+  <view wx:if="{{orders.length === 0}}" class="empty">暂无订单</view>
+
+  <view class="order-list">
+    <view class="order-card" wx:for="{{orders}}" wx:key="id">
+      <view class="order-header">
+        <text class="order-no">{{item.orderNo}}</text>
+        <text class="order-status">{{statusMap[item.status]}}</text>
+      </view>
+      <view class="order-body">
+        <text class="sitter-name">宠托师: {{item.sitter.realName}}</text>
+        <text class="service-date">服务时间: {{item.serviceDateStart}} ~ {{item.serviceDateEnd}}</text>
+        <text class="amount">¥{{item.totalAmount}}</text>
+      </view>
+      <view class="order-actions">
+        <button wx:if="{{item.status <= 1}}" class="btn-cancel" size="mini" bindtap="cancelOrder" data-id="{{item.id}}">取消</button>
+      </view>
+    </view>
+  </view>
+</view>

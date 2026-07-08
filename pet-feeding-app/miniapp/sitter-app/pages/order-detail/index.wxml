@@ -1,0 +1,31 @@
+<view class="container" wx:if="{{order}}">
+  <view class="status-banner">
+    <text class="status">{{statusMap[order.status]}}</text>
+  </view>
+
+  <view class="section">
+    <text class="section-title">用户信息</text>
+    <view class="info-row"><text class="label">用户</text><text>{{order.user.nickname}}</text></view>
+    <view class="info-row"><text class="label">电话</text><text>{{order.user.phone || '未绑定'}}</text></view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">服务信息</text>
+    <view class="info-row"><text class="label">日期</text><text>{{order.serviceDateStart}} ~ {{order.serviceDateEnd}}</text></view>
+    <view class="info-row"><text class="label">次数</text><text>每日{{order.dailyTimes}}次</text></view>
+    <view class="info-row"><text class="label">地址</text><text>{{order.serviceAddress}}</text></view>
+    <view class="info-row"><text class="label">服务</text><text>{{order.serviceItems}}</text></view>
+    <view class="info-row" wx:if="{{order.remark}}"><text class="label">备注</text><text>{{order.remark}}</text></view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">费用信息</text>
+    <view class="info-row"><text class="label">订单金额</text><text class="amount">¥{{order.totalAmount}}</text></view>
+    <view class="info-row"><text class="label">我的收入</text><text class="income">¥{{order.sitterIncome}}</text></view>
+  </view>
+
+  <view class="section" wx:if="{{order.signInTime}}">
+    <text class="section-title">签到信息</text>
+    <view class="info-row"><text class="label">签到时间</text><text>{{order.signInTime}}</text></view>
+  </view>
+</view>

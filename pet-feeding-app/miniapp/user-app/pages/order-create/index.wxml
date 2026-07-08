@@ -1,0 +1,55 @@
+<view class="container" wx:if="{{sitter}}">
+  <view class="section">
+    <text class="section-title">选择宠物</text>
+    <view class="pet-list">
+      <view class="pet-item {{selectedPets.includes(item.id) ? 'selected' : ''}}" wx:for="{{pets}}" wx:key="id" bindtap="onPetSelect" data-id="{{item.id}}">
+        <text>{{item.name}}({{item.species}})</text>
+      </view>
+    </view>
+    <view wx:if="{{pets.length === 0}}" class="tip">暂无宠物，请先在"我的"中添加</view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">选择服务</text>
+    <view class="service-list">
+      <view class="service-item {{selectedServices.includes(item.name) ? 'selected' : ''}}" wx:for="{{sitter.serviceItems}}" wx:key="name" bindtap="onServiceSelect" data-name="{{item.name}}">
+        <text>{{item.name}}</text>
+        <text class="price">¥{{item.price}}/{{item.unit}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">服务日期</text>
+    <view class="date-row">
+      <picker mode="date" bindchange="onStartDateChange">
+        <view class="date-picker">{{serviceDateStart || '开始日期'}}</view>
+      </picker>
+      <text class="date-sep">至</text>
+      <picker mode="date" bindchange="onEndDateChange">
+        <view class="date-picker">{{serviceDateEnd || '结束日期'}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <text>每日喂养次数</text>
+      <input type="number" value="{{dailyTimes}}" bindinput="onDailyTimesChange" class="input-sm" />
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">服务地址</text>
+    <view class="address-row" bindtap="chooseAddress">
+      <text class="{{address ? '' : 'placeholder'}}">{{address || '点击选择地址'}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">备注</text>
+    <textarea placeholder="请输入备注信息（选填）" bindinput="onRemarkInput" maxlength="200" class="textarea" />
+  </view>
+
+  <view class="footer">
+    <view class="amount">合计: <text class="amount-num">¥{{totalAmount}}</text></view>
+    <button class="btn-submit" bindtap="submitOrder">提交订单</button>
+  </view>
+</view>

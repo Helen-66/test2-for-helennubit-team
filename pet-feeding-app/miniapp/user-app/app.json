@@ -1,0 +1,25 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/sitter-detail/index",
+    "pages/order-create/index",
+    "pages/order-list/index",
+    "pages/pet-manage/index",
+    "pages/mine/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF8C42",
+    "navigationBarTitleText": "宠物上门喂养",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#FF8C42",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页", "iconPath": "assets/tab-home.png", "selectedIconPath": "assets/tab-home-active.png" },
+      { "pagePath": "pages/order-list/index", "text": "订单", "iconPath": "assets/tab-order.png", "selectedIconPath": "assets/tab-order-active.png" },
+      { "pagePath": "pages/mine/index", "text": "我的", "iconPath": "assets/tab-mine.png", "selectedIconPath": "assets/tab-mine-active.png" }
+    ]
+  }
+}

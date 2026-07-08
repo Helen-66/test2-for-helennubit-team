@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="summary">
+    <view class="summary-item">
+      <text class="amount">¥{{totalIncome}}</text>
+      <text class="label">总收入</text>
+    </view>
+    <view class="summary-item">
+      <text class="amount settled">¥{{settledIncome}}</text>
+      <text class="label">已结算</text>
+    </view>
+    <view class="summary-item">
+      <text class="amount pending">¥{{pendingIncome}}</text>
+      <text class="label">待结算</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">收入明细</text>
+    <view wx:if="{{orders.length === 0}}" class="empty">暂无收入记录</view>
+    <view class="income-list">
+      <view class="income-item" wx:for="{{orders}}" wx:key="id">
+        <view class="income-info">
+          <text class="order-no">{{item.orderNo}}</text>
+          <text class="date">{{item.completeTime}}</text>
+        </view>
+        <view class="income-right">
+          <text class="income-amount">+¥{{item.sitterIncome}}</text>
+          <text class="settle-status {{item.settleStatus === 2 ? 'done' : ''}}">{{item.settleStatus === 2 ? '已到账' : '待结算'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tip">订单完成后24小时自动结算到账</view>
+</view>

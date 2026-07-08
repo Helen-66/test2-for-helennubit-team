@@ -1,0 +1,38 @@
+<view class="container">
+  <view class="header">
+    <text class="title">我的宠物</text>
+    <button class="btn-add" size="mini" bindtap="showAddForm">+添加</button>
+  </view>
+
+  <view wx:if="{{pets.length === 0}}" class="empty">暂无宠物，快去添加吧</view>
+
+  <view class="pet-list">
+    <view class="pet-card" wx:for="{{pets}}" wx:key="id">
+      <view class="pet-info">
+        <text class="pet-name">{{item.name}}</text>
+        <text class="pet-desc">{{item.species}} · {{item.breed || '未知品种'}} · {{item.age || '未知年龄'}}</text>
+      </view>
+      <view class="pet-actions">
+        <text class="btn-edit" bindtap="editPet" data-id="{{item.id}}">编辑</text>
+        <text class="btn-del" bindtap="deletePet" data-id="{{item.id}}">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 表单弹窗 -->
+  <view class="modal" wx:if="{{showForm}}">
+    <view class="modal-mask" bindtap="hideForm"></view>
+    <view class="modal-content">
+      <text class="modal-title">{{editId ? '编辑宠物' : '添加宠物'}}</text>
+      <view class="form-item"><text>名称</text><input value="{{form.name}}" bindinput="onInput" data-field="name" placeholder="宠物名称" /></view>
+      <view class="form-item"><text>种类</text><picker range="{{['猫','狗','其他']}}" bindchange="onSpeciesChange"><view>{{form.species}}</view></picker></view>
+      <view class="form-item"><text>品种</text><input value="{{form.breed}}" bindinput="onInput" data-field="breed" placeholder="如:英短蓝猫" /></view>
+      <view class="form-item"><text>体重(kg)</text><input type="digit" value="{{form.weight}}" bindinput="onInput" data-field="weight" placeholder="体重" /></view>
+      <view class="form-item"><text>年龄</text><input value="{{form.age}}" bindinput="onInput" data-field="age" placeholder="如:2岁" /></view>
+      <view class="form-item"><text>性别</text><picker range="{{['公','母']}}" bindchange="onGenderChange"><view>{{form.gender === 1 ? '公' : '母'}}</view></picker></view>
+      <view class="form-item"><text>性格</text><input value="{{form.characterDesc}}" bindinput="onInput" data-field="characterDesc" placeholder="性格描述" /></view>
+      <view class="form-item"><text>喂养备注</text><textarea value="{{form.feedingNotes}}" bindinput="onInput" data-field="feedingNotes" placeholder="喂养注意事项" class="textarea-sm" /></view>
+      <button class="btn-save" bindtap="savePet">保存</button>
+    </view>
+  </view>
+</view>

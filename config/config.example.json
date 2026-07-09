@@ -1,0 +1,22 @@
+{
+  "base_url": "https://api.example.com",
+  "timeout": 30,
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "auth": {
+    "type": "bearer",
+    "token": ""
+  },
+  "environments": {
+    "dev": {
+      "base_url": "https://dev.api.example.com",
+      "timeout": 10
+    },
+    "prod": {
+      "base_url": "https://api.example.com",
+      "timeout": 60
+    }
+  }
+}
